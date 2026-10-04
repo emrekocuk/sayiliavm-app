@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sayılı AVM</string>
+    <string name="title_activity_main">Sayılı AVM</string>
+    <string name="package_name">com.sayiliavm.app</string>
+    <string name="custom_url_scheme">com.sayiliavm.app</string>
+</resources>

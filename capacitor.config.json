@@ -1,0 +1,9 @@
+{
+  "appId": "com.sayiliavm.app",
+  "appName": "Sayılı AVM",
+  "webDir": "www",
+  "server": {
+    "url": "https://sayiliavm.com/app-onizleme.html",
+    "androidScheme": "https"
+  }
+}

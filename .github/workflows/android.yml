@@ -1,0 +1,50 @@
+name: Android Build (AAB)
+
+on:
+  workflow_dispatch:        # Play'e yüklenecek imzalı AAB — elle tetiklenir
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: npm install
+        run: npm install
+
+      - name: Capacitor sync (android)
+        run: npx cap sync android
+
+      - name: keystore (secret'tan)
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "${RUNNER_TEMP}/release.keystore"
+
+      - name: gradlew çalıştırılabilir
+        run: chmod +x android/gradlew
+
+      - name: Build imzalı AAB
+        working-directory: android
+        env:
+          AVM_KEYSTORE_PATH: ${{ runner.temp }}/release.keystore
+          AVM_STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          AVM_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          AVM_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew bundleRelease --no-daemon
+
+      - name: AAB'yi yükle (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sayiliavm-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error

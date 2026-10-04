@@ -4,4 +4,5 @@
     <string name="title_activity_main">Sayılı AVM</string>
     <string name="package_name">com.sayiliavm.app</string>
     <string name="custom_url_scheme">com.sayiliavm.app</string>
+    <string name="title_activity_auth_activity">Kimlik Doğrulama</string>
 </resources>

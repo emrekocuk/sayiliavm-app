@@ -8,3 +8,6 @@ android/app/release.keystore
 *.keystore
 *.jks
 .DS_Store
+---
+.jdk17/
+.keystore_sifreleri_GIZLI.txt

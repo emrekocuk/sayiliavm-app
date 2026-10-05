@@ -10,6 +10,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Mevcut en güncel Xcode'u seç (App Store artık iOS 26 SDK istiyor)
+        run: |
+          ls /Applications | grep -i Xcode
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+          xcodebuild -version
+
       - name: Node 22
         uses: actions/setup-node@v4
         with:

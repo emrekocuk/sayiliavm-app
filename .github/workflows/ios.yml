@@ -23,9 +23,11 @@ jobs:
 
       - name: Simülatör için imzasız derleme (sertifika gerekmez)
         working-directory: ios/App
+        # Bu proje Capacitor'ın SPM (CocoaPods degil) sablonuyla olusturuldu - ayri bir
+        # .xcworkspace yok, paket bagimliliklari .xcodeproj icinde dogrudan cozuluyor.
         run: |
           xcodebuild build \
-            -workspace App.xcworkspace \
+            -project App.xcodeproj \
             -scheme App \
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \

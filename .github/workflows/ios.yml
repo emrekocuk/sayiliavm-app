@@ -1,0 +1,32 @@
+name: iOS Build
+
+on:
+  workflow_dispatch:        # Simülatör derlemesi — imza gerekmez, Xcode projesinin derlendiğini doğrular
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: npm install
+        run: npm install
+
+      - name: Capacitor sync (ios)
+        run: npx cap sync ios
+
+      - name: Simülatör için imzasız derleme (sertifika gerekmez)
+        working-directory: ios/App
+        run: |
+          xcodebuild build \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO

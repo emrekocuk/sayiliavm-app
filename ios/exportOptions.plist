@@ -13,7 +13,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.sayiliavm.app</key>
-		<string>Sayili AVM App Store</string>
+		<string>Sayili AVM App Store CI</string>
 	</dict>
 </dict>
 </plist>

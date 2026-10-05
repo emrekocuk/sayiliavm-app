@@ -9,6 +9,11 @@
 	<key>teamID</key>
 	<string>S4PK2NFMXU</string>
 	<key>signingStyle</key>
-	<string>automatic</string>
+	<string>manual</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.sayiliavm.app</key>
+		<string>Sayili AVM App Store</string>
+	</dict>
 </dict>
 </plist>

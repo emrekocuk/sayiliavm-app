@@ -11,7 +11,6 @@ import urllib.request
 import jwt
 
 BUNDLE_ID = "com.sayiliavm.app"
-CERT_NAME_PREFIX = "Sayili AVM CI"
 PROFILE_NAME = "Sayili AVM App Store CI"
 
 runner_temp = os.environ["RUNNER_TEMP"]
@@ -55,13 +54,17 @@ def list_all(path):
     return items
 
 
-# 1) Onceki CI calismalarindan kalan sertifika/profilleri temizle (Apple'da max 3 Apple
-#    Distribution sertifikasina izin var, birikmesin).
+# 1) Onceki CI calismalarindan kalan sertifikalari temizle (Apple IOS_DISTRIBUTION turunde
+#    sadece birkac aktif sertifikaya izin veriyor, birikirse yeni olusturma 409 ile reddediliyor).
+# NOT: Apple'in API'si bu sertifikalara OZEL bir isim VERMEMIZE izin vermiyor - displayName hep
+# takim/organizasyon adini donduruyor (CSR'daki CN alani YOK SAYILIYOR), bu yuzden daha once
+# burada denenen isim-eslestirmeli temizlik ASLA eslesmiyordu ve her calisma eskiyi silmeden
+# ustune yeni sertifika ekliyordu. IOS_DISTRIBUTION filtresi, Codemagic'in kullandigi ESKI/FARKLI
+# "DISTRIBUTION" turunu hic KAPSAMADIGI icin, bu sorguyla donen HER SEYI kosulsuz silmek guvenli -
+# ciki/Codemagic sertifikalarina asla dokunmaz.
 for cert in list_all("/certificates?filter[certificateType]=IOS_DISTRIBUTION"):
-    name = cert["attributes"].get("displayName") or cert["attributes"].get("name") or ""
-    if name.startswith(CERT_NAME_PREFIX):
-        call("DELETE", f"/certificates/{cert['id']}")
-        print("eski sertifika silindi:", cert["id"])
+    call("DELETE", f"/certificates/{cert['id']}")
+    print("eski sertifika silindi:", cert["id"])
 
 for profile in list_all("/profiles?filter[profileType]=IOS_APP_STORE"):
     if profile["attributes"].get("name") == PROFILE_NAME:

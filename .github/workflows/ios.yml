@@ -21,6 +21,11 @@ jobs:
       - name: Capacitor sync (ios)
         run: npx cap sync ios
 
+      - name: GoogleService-Info.plist (secret'tan)
+        run: |
+          test -n "${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}" || { echo "GOOGLE_SERVICE_INFO_PLIST_BASE64 secret yok"; exit 1; }
+          echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}" | base64 -d > ios/App/App/GoogleService-Info.plist
+
       - name: Simülatör için imzasız derleme (sertifika gerekmez)
         working-directory: ios/App
         # Bu proje Capacitor'ın SPM (CocoaPods degil) sablonuyla olusturuldu - ayri bir

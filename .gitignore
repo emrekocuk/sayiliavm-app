@@ -12,3 +12,4 @@ android/app/release.keystore
 .jdk17/
 .keystore_sifreleri_GIZLI.txt
 build_ciktilari/
+ios/App/App/GoogleService-Info.plist

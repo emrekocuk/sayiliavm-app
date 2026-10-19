@@ -1,5 +1,7 @@
 import UIKit
 import Capacitor
+import FirebaseCore
+import FirebaseMessaging
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,8 +9,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Bildirimler Firebase (FCM) uzerinden gider: sunucu Android ile ayni yolu kullanir.
+        FirebaseApp.configure()
         return true
+    }
+
+    // Apple'in verdigi cihaz anahtarini Firebase'e verip FCM tokenini Capacitor'a iletiyoruz;
+    // boylece web tarafindaki PushNotifications 'registration' olayi iPhone'da da FCM tokeni alir.
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+            } else if let token = token {
+                NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: token)
+            }
+        }
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

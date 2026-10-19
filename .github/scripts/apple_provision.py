@@ -95,6 +95,25 @@ if status != 200 or not resp["data"]:
     raise RuntimeError(f"bundle id bulunamadi: {status} {resp}")
 bundle_id_resource = resp["data"][0]["id"]
 
+# 3b) Bildirim (Push) yetkisi App ID'de acik olmali, yoksa profil aps-environment icermez ve
+#     imzalama "entitlement profilde yok" diye patlar. Zaten aciksa dokunmaz.
+status, resp = call("GET", f"/bundleIds/{bundle_id_resource}/bundleIdCapabilities")
+if status != 200:
+    raise RuntimeError(f"yetenekler okunamadi: {status} {resp}")
+if not any(c["attributes"].get("capabilityType") == "PUSH_NOTIFICATIONS" for c in resp["data"]):
+    status, resp = call("POST", "/bundleIdCapabilities", {
+        "data": {
+            "type": "bundleIdCapabilities",
+            "attributes": {"capabilityType": "PUSH_NOTIFICATIONS"},
+            "relationships": {"bundleId": {"data": {"type": "bundleIds", "id": bundle_id_resource}}},
+        }
+    })
+    if status not in (200, 201):
+        raise RuntimeError(f"push yetkisi acilamadi: {status} {resp}")
+    print("App ID'de Push Notifications acildi")
+else:
+    print("App ID'de Push Notifications zaten acik")
+
 # 4) Yeni App Store profili olustur (yeni sertifikaya bagli)
 status, resp = call("POST", "/profiles", {
     "data": {
